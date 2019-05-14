@@ -9,5 +9,12 @@ app_form.capture_as_image().save('screenshot.png')
 
 im = Image.open('screenshot.png')
 im_w, im_h = im.size
-im_crop = im.crop((0, 0, im_w/2, 100))
+im_crop = im.crop((0, 60, im_w/2, 100))
 im_crop.save('screenshot.png', quality=95)
+
+im = Image.open('screenshot.png')
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
+number = pytesseract.image_to_string(im)
+print(number)
+if number == 'round 15':
+    print('round 15 だよ！！！')
