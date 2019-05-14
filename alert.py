@@ -1,8 +1,6 @@
 # coding: UTF-8
-from pywinauto import application
-from time import sleep
+import pywinauto
 
-app = application.Application().start("notepad.exe")
-
-# sleep(1)
-# app[].CaptureAsImage().save('window.png')
+app = pywinauto.application.Application().connect(title_re=u".*メモ帳.*")
+app_form = app.window(title_re = u".*メモ帳.*")
+app_form.capture_as_image().save('ss.png')
