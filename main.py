@@ -1,14 +1,14 @@
 # coding: UTF-8
-import pywinauto
-from PIL import Image
-import pytesseract
 import sys
 import os
 import threading
+from tkinter import messagebox
+import pywinauto
+from PIL import Image
+import pytesseract
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QThread
-from tkinter import messagebox
 
 class Window(QWidget):
     def __init__(self):
@@ -56,8 +56,10 @@ class Window(QWidget):
         print(number)
         str = number.find('ROUND 15')
         if str != -1:
-            print('ROUND 15 だよ！！！')
             messagebox.showinfo("15Alert","ROUND15だよ！")
+            self.flag = 0
+            print('stop')
+            os._exit(myApp.exec_())
         else:
             if self.flag == 1:
                 t = threading.Timer(5,self.alert)
