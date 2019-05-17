@@ -3,6 +3,9 @@ import sys
 import os
 import threading
 from tkinter import messagebox
+import warnings
+warnings.simplefilter("ignore", UserWarning)
+sys.coinit_flags = 2
 import pywinauto
 from PIL import Image
 import pytesseract
