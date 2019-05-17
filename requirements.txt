@@ -3,4 +3,3 @@ Pilliw=5.0.0
 pytesseract=0.2.6
 PyQt5-sip=4.19.17
 pyqt5=5.12.2
-asyncio=3.4.3

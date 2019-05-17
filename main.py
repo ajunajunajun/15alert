@@ -3,10 +3,12 @@ import pywinauto
 from PIL import Image
 import pytesseract
 import sys
-import asyncio
+import os
+import threading
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QThread
+from tkinter import messagebox
 
 class Window(QWidget):
     def __init__(self):
@@ -21,7 +23,7 @@ class Window(QWidget):
         btn.move(30,120)
         btn.clicked.connect(self.buttonClicked)
 
-    def buttonClicked(self):
+    def alert(self):
         app = pywinauto.application.Application().connect(title_re=u".*メモ帳.*")
         app_form = app.window(title_re = u".*メモ帳.*")
         app_form.capture_as_image().save('screenshot.png')
@@ -36,13 +38,19 @@ class Window(QWidget):
         number = pytesseract.image_to_string(im)
         print(number)
         str = number.find('ROUND 15')
+        messagebox.showinfo("15Alert","ROUND15だよ！")
         if str != -1:
             print('ROUND 15 だよ！！！')
-        QThread.sleep(3)
+        t = threading.Timer(10,self.alert)
+        t.start()
+    def buttonClicked(self):
+        t = threading.Thread(target=self.alert)
+        t.start()
+
 
 if __name__ == '__main__':
     myApp = QApplication(sys.argv)
     myWindow = Window()
     myWindow.show()
 
-    sys.exit(myApp.exec_())
+    os._exit(myApp.exec_())
