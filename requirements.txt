@@ -3,3 +3,4 @@ Pillow=6.0.0
 pytesseract=0.2.6
 pyqt5=5.12.2
 pywin32=224
+win10toast=0.9

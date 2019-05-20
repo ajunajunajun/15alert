@@ -2,13 +2,13 @@
 import sys
 import os
 import threading
-from tkinter import messagebox
 import warnings
 warnings.simplefilter("ignore", UserWarning)
 sys.coinit_flags = 2
 import pywinauto
 from PIL import Image
 import pytesseract
+from win10toast import ToastNotifier
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QThread
@@ -60,9 +60,10 @@ class Window(QWidget):
         pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract'
         number = pytesseract.image_to_string(im)
         print(number)
-        str = number.find('ROUND 15')
+        str = number.find('ROUND 25')
         if str != -1:
-            messagebox.showinfo("15Alert","ROUND15だよ！")
+            toaster = ToastNotifier()
+            toaster.show_toast("15Alert","ROUND15だよ！！！！")
             self.flag = 0
             self.lblrun.setText('stopping')
             print('stop')
