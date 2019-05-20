@@ -16,8 +16,8 @@ from PyQt5.QtCore import QThread
 class Window(QWidget):
     def __init__(self):
         QWidget.__init__(self)
-        self.resize(260, 180)
-        self.move(300, 300)
+        self.resize(260, 200)
+        self.move(200, 200)
         self.setWindowTitle('15Alert')
         self.setWindowIcon(QIcon('hiyoko.png'))
 
@@ -26,41 +26,45 @@ class Window(QWidget):
 
         self.img = QLabel(self)
         pixmap = QPixmap('screenshot.png')
+        pixmap = pixmap.scaledToWidth(200)
         self.img.setPixmap(pixmap)
-        self.img.resize(200,40)
         self.img.move(30,60)
 
         self.flag = 0
 
+        self.lblrun = QLabel('stopping', self)
+        self.lblrun.move(30,120)
+
         btn = QPushButton('START', self)
         btn.resize(100,40)
-        btn.move(30,120)
+        btn.move(30,140)
         btn.clicked.connect(self.buttonClicked)
 
         btn2 = QPushButton('STOP', self)
         btn2.resize(100,40)
-        btn2.move(130,120)
+        btn2.move(130,140)
         btn2.clicked.connect(self.buttonClicked2)
 
     def alert(self):
-        app = pywinauto.application.Application().connect(title_re=u".*メモ帳.*")
-        app_form = app.window(title_re = u".*メモ帳.*")
+        app = pywinauto.application.Application().connect(title_re=".*Chrome.*")
+        app_form = app.window(title_re = ".*Chrome.*")
         app_form.capture_as_image().save('screenshot.png')
 
         im = Image.open('screenshot.png')
         im_w, im_h = im.size
-        im_crop = im.crop((100, 200, 550, 260))
+        im_crop = im.crop((im_w/6*2, 0, im_w/6*4, im_h/10))
         im_crop.save('screenshot.png', quality=95)
         im.close()
 
         im = Image.open('screenshot.png')
-        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
+        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract'
         number = pytesseract.image_to_string(im)
         print(number)
         str = number.find('ROUND 15')
         if str != -1:
             messagebox.showinfo("15Alert","ROUND15だよ！")
             self.flag = 0
+            self.lblrun.setText('stopping')
             print('stop')
             os._exit(myApp.exec_())
         else:
@@ -68,16 +72,19 @@ class Window(QWidget):
                 t = threading.Timer(5,self.alert)
                 t.start()
             else:
+                self.lblrun.setText('stopping')
                 print('stop')
                 self.flag = 0
 
         pixmap = QPixmap('screenshot.png')
+        pixmap = pixmap.scaledToWidth(200)
         self.img.setPixmap(pixmap)
         im.close()
 
 
     def buttonClicked(self):
         if self.flag == 0:
+            self.lblrun.setText('running')
             print('start')
             self.flag = 1
             self.t = threading.Thread(target=self.alert)
@@ -85,6 +92,7 @@ class Window(QWidget):
 
     def buttonClicked2(self):
         if self.flag == 1:
+            self.lblrun.setText('stopping')
             self.flag = -1
 
 if __name__ == '__main__':
