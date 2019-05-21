@@ -6,7 +6,7 @@ import warnings
 warnings.simplefilter("ignore", UserWarning)
 sys.coinit_flags = 2
 import pywinauto
-from PIL import Image
+from PIL import Image, ImageEnhance, ImageOps
 import pytesseract
 from win10toast import ToastNotifier
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
@@ -52,22 +52,24 @@ class Window(QWidget):
 
         im = Image.open('screenshot.png')
         im_w, im_h = im.size
-        im_crop = im.crop((im_w/6*2, 0, im_w/6*4, im_h/10))
+        im_crop = im.crop((im_w/6*2.2, 0, im_w/6*2.6, im_h/35))
+        gray = im_crop.convert("L")                     # グレイスケールに変換
+        img = ImageEnhance.Sharpness(gray)
+        im_crop = img.enhance(10)
         im_crop.save('screenshot.png', quality=95)
         im.close()
 
         im = Image.open('screenshot.png')
-        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract'
+        pytesseract.pytesseract.tesseract_cmd = r'./Tesseract-OCR/tesseract.exe'
         number = pytesseract.image_to_string(im)
         print(number)
-        str = number.find('ROUND 25')
+        str = number.find('ROUND 15')
         if str != -1:
             toaster = ToastNotifier()
             toaster.show_toast("15Alert","ROUND15だよ！！！！")
-            self.flag = 0
             self.lblrun.setText('stopping')
             print('stop')
-            os._exit(myApp.exec_())
+            self.flag = 0
         else:
             if self.flag == 1:
                 t = threading.Timer(5,self.alert)
