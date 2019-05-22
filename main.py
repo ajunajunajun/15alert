@@ -46,22 +46,21 @@ class Window(QWidget):
         btn2.clicked.connect(self.buttonClicked2)
 
     def alert(self):
-        app = pywinauto.application.Application().connect(title_re=".*Chrome.*")
-        app_form = app.window(title_re = ".*Chrome.*")
+        app = pywinauto.application.Application().connect(title_re=".*Dota.*")
+        app_form = app.window(title_re = ".*Dota.*")
         app_form.capture_as_image().save('screenshot.png')
 
         im = Image.open('screenshot.png')
         im_w, im_h = im.size
         im_crop = im.crop((im_w/6*2.2, 0, im_w/6*2.6, im_h/35))
         gray = im_crop.convert("L")                     # グレイスケールに変換
-        img = ImageEnhance.Sharpness(gray)
-        im_crop = img.enhance(10)
+        im_crop = gray.point(lambda x: 0 if x < 150 else x)   # 値が230以下は0になる
         im_crop.save('screenshot.png', quality=95)
         im.close()
 
         im = Image.open('screenshot.png')
         pytesseract.pytesseract.tesseract_cmd = r'./Tesseract-OCR/tesseract.exe'
-        number = pytesseract.image_to_string(im)
+        number = pytesseract.image_to_string(im,lang="eng")
         print(number)
         str = number.find('ROUND 15')
         if str != -1:
